@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>champion list</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    h1{color:blue;}
+    .container{
+      display: flex;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+
+
+<body>
+<h1>CHAMPION LIST</h1>
+<button id="buttonHiddenToggle" onclick="clickHiddenToggle()">HIDDEN NAME</button>
+
+<div id="container" class="container">
+</div>
+
+<script>
+  const container = document.getElementById('container');
+  const eleHiddenToggle = document.getElementById('buttonHiddenToggle');
+
+  function clickHiddenToggle(){ 
+    if(container){
+      container.innerHTML = '';
+    }else{
+      console.error("error => container is null");
+    }
+
+    if(eleHiddenToggle.textContent == "HIDDEN NAME"){
+      eleHiddenToggle.textContent = "SHOW NAME";
+
+      for(let key in champion){
+        image_path = "images/" + champion[key].id + ".png"
+        container.innerHTML += '<img src="' + image_path + '" title="'+ champion[key].name + '(' +champion[key].id + ')'+ champion[key].tags+'">';
+      }
+    }else{
+      eleHiddenToggle.textContent = "HIDDEN NAME";
+
+      for(let key in champion){
+        image_path = "images/" + champion[key].id + ".png"
+        container.innerHTML += '<img src=' + image_path + '>';
+        container.innerHTML += '<a>' + champion[key].name + '<br>(' + champion[key].id + ')<br>'+ champion[key].tags +'</a>';
+      }
+    }
+  }
+  let jsonFile = null;
+  let isOpenFile = false;
+
+  let requestURL = './public/champion.json';
+  let request = new XMLHttpRequest();
+  request.open('GET', requestURL);
+  request.responseType = 'json';
+  request.send();
+
+  request.onload = function () {
+    isOpenFile = true;
+    jsonFile = request.response;
+    champion = jsonFile['data'];
+
+    for(let key in champion){
+      image_path = "images/" + champion[key].id + ".png"
+      container.innerHTML += '<img src=' + image_path + '>';
+      container.innerHTML += '<a>' + champion[key].name + '<br>(' + champion[key].id + ')<br>'+ champion[key].tags +'</a>';
+    }
+  }
+
+</script>
+</body>
+</html>
