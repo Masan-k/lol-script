@@ -1,1 +1,2 @@
-tool/*/output/*.png
+tool/getChampionImage/output/splash/*.jpg
+tool/getChampionImage/output/square/*.png
