@@ -10,6 +10,44 @@
       display: flex;
       flex-wrap: wrap;
     }
+    /* 1チャンプ = カード1枚 */
+    .card {
+      box-sizing: border-box;
+      padding: 4px;
+      text-align: center;
+    }
+   
+    .card img {
+      display: block;
+      max-width: 100%;      /* 親（.item）の幅に合わせる */
+      height: auto;     /* 縦横比を維持して縮小 */
+    }
+
+    .card-text {
+      display: block;
+      box-sizing: border-box;
+      text-align: left;
+      /*font-size: 0.8rem;*/
+    }
+    @media (max-width:300px){
+      .card{
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
+    }
+    @media (min-width: 301px) and (max-width:600px){
+      .card{
+        flex: 0 0 33.33%;
+        max-width: 33.33%;
+      }
+    }
+
+    @media (min-width:601px){
+      .card{
+        flex: 0 0 25%;
+        max-width: 25%;
+      }
+    }
   </style>
 </head>
 
@@ -17,37 +55,41 @@
 <body>
 <h1>CHAMPION LIST</h1>
 <button id="buttonHiddenToggle" onclick="clickHiddenToggle()">HIDDEN NAME</button>
-
-<div id="container" class="container">
-</div>
+<div id="container" class="container"></div>
 
 <script>
+  let champion = null;
   const container = document.getElementById('container');
   const eleHiddenToggle = document.getElementById('buttonHiddenToggle');
 
-  function clickHiddenToggle(){ 
-    if(container){
-      container.innerHTML = '';
-    }else{
-      console.error("error => container is null");
+  function renderChampion(showName){
+    container.innerHTML = '';
+
+    for(let key in champion){
+      const image_path = "images/" + champion[key].id + ".png"
+
+      container.innerHTML += '<div class="card">';
+      if(showName){
+        container.innerHTML += '<img src="' + image_path + '">';
+        container.innerHTML += '<a class="card-text">' + champion[key].name + '<br>(' + champion[key].id + ')<br>'+ champion[key].tags +'</a>';
+      }else{
+        container.innerHTML += '<img src="' + image_path + '" title="'+ champion[key].name + '(' +champion[key].id + ')'+ champion[key].tags+'">';
+      }
+      container.innerHTML += '</div>';
     }
+  }
+
+  function clickHiddenToggle(){ 
 
     if(eleHiddenToggle.textContent == "HIDDEN NAME"){
       eleHiddenToggle.textContent = "SHOW NAME";
+      renderChampion(false);
 
-      for(let key in champion){
-        image_path = "images/" + champion[key].id + ".png"
-        container.innerHTML += '<img src="' + image_path + '" title="'+ champion[key].name + '(' +champion[key].id + ')'+ champion[key].tags+'">';
-      }
     }else{
       eleHiddenToggle.textContent = "HIDDEN NAME";
-
-      for(let key in champion){
-        image_path = "images/" + champion[key].id + ".png"
-        container.innerHTML += '<img src=' + image_path + '>';
-        container.innerHTML += '<a>' + champion[key].name + '<br>(' + champion[key].id + ')<br>'+ champion[key].tags +'</a>';
-      }
+      renderChampion(true);
     }
+
   }
   let jsonFile = null;
   let isOpenFile = false;
@@ -63,11 +105,7 @@
     jsonFile = request.response;
     champion = jsonFile['data'];
 
-    for(let key in champion){
-      image_path = "images/" + champion[key].id + ".png"
-      container.innerHTML += '<img src=' + image_path + '>';
-      container.innerHTML += '<a>' + champion[key].name + '<br>(' + champion[key].id + ')<br>'+ champion[key].tags +'</a>';
-    }
+    renderChampion(true);
   }
 
 </script>
