@@ -7,14 +7,15 @@
   <style>
     h1{color:blue;}
     .container{
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      gap: 8px;
     }
-    /* 1チャンプ = カード1枚 */
     .card {
+      display: flex;
       box-sizing: border-box;
       padding: 4px;
       text-align: center;
+      align-items: center;
     }
    
     .card img {
@@ -27,27 +28,34 @@
       display: block;
       box-sizing: border-box;
       text-align: left;
-      /*font-size: 0.8rem;*/
-    }
-    @media (max-width:300px){
-      .card{
-        flex: 0 0 50%;
-        max-width: 50%;
-      }
-    }
-    @media (min-width: 301px) and (max-width:600px){
-      .card{
-        flex: 0 0 33.33%;
-        max-width: 33.33%;
-      }
+      font-size: 0.8rem;
     }
 
-    @media (min-width:601px){
-      .card{
-        flex: 0 0 25%;
-        max-width: 25%;
-      }
+    .container.names .card {
+      display: flex;
     }
+    .container.icons .card {
+      display: block;
+    }
+    .container.icons .card img {
+      width: 100%;
+    }
+    @media (max-width:300px){
+      .container{grid-template-columns: repeat(1, 1fr);}
+    } 
+    @media (min-width: 301px) and (max-width:600px){
+      .container{grid-template-columns: repeat(2, 1fr);}
+    }
+    @media (min-width:601px)  and (max-width:900px){
+      .container{grid-template-columns: repeat(3, 1fr);}
+    }
+    @media (min-width:901px)  and (max-width:1200px){
+      .container{grid-template-columns: repeat(4, 1fr);}
+    }
+    @media (min-width: 1201px){
+      .container{grid-template-columns: repeat(5, 1fr);}
+    }
+     
   </style>
 </head>
 
@@ -63,20 +71,30 @@
   const eleHiddenToggle = document.getElementById('buttonHiddenToggle');
 
   function renderChampion(showName){
+    if (showName) {
+      container.classList.add('names');
+      container.classList.remove('icons');
+    } else {
+      container.classList.add('icons');
+      container.classList.remove('names');
+    }
+
     container.innerHTML = '';
 
     for(let key in champion){
       const image_path = "images/" + champion[key].id + ".png"
 
-      container.innerHTML += '<div class="card">';
+      let html = '<div class="card">';
       if(showName){
-        container.innerHTML += '<img src="' + image_path + '">';
-        container.innerHTML += '<a class="card-text">' + champion[key].name + '<br>(' + champion[key].id + ')<br>'+ champion[key].tags +'</a>';
+        html += '<img src="' + image_path + '">';
+        html += '<a class="card-text">' + champion[key].name + '<br>(' + champion[key].id + ')<br>'+ champion[key].tags +'</a>';
       }else{
-        container.innerHTML += '<img src="' + image_path + '" title="'+ champion[key].name + '(' +champion[key].id + ')'+ champion[key].tags+'">';
+        html += '<img src="' + image_path + '" title="'+ champion[key].name + '(' +champion[key].id + ')'+ champion[key].tags+'">';
       }
-      container.innerHTML += '</div>';
+      html += '</div>';
+      container.innerHTML += html;
     }
+
   }
 
   function clickHiddenToggle(){ 
